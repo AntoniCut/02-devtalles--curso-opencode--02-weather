@@ -1,10 +1,12 @@
+import { dim } from "./colors.ts";
+
 export function askQuestion(promptText: string): string {
   const answer = prompt(promptText);
   return answer === null ? "" : answer.trim();
 }
 
 export function pause(): void {
-  prompt("  Presiona Enter para continuar...");
+  prompt(dim("  Presiona Enter para continuar..."));
 }
 
 export function closeInput(): void {

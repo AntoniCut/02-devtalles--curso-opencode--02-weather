@@ -13,30 +13,31 @@ import {
 import { searchCities } from "./api/geocoding.ts";
 import { fetchWeatherInfo, printWeather } from "./weather.ts";
 import { askQuestion, pause, closeInput } from "./input.ts";
+import { cyan, green, red, yellow, bold, dim } from "./colors.ts";
 
-const LINE = "═".repeat(41);
+const LINE = cyan("═".repeat(41));
 
 function printMenu(data: AppData): void {
   console.log(LINE);
-  console.log("         WEATHER CLI");
+  console.log(bold(cyan("         WEATHER CLI")));
   console.log(LINE);
-  console.log("  1. Clima de ciudad default");
-  console.log(`  2. Clima de todas las ciudades (${data.cities.length})`);
-  console.log("  3. Buscar y agregar ciudad");
-  console.log("  4. Eliminar ciudad");
-  console.log("  5. Establecer ciudad default");
-  console.log("  6. Not Found - Implementar en el futuro");
-  console.log("  7. Not Found - Implementar en el futuro");
-  console.log(`  8. Ajustes (${unitLabel(data.unit)})`);
-  console.log("  9. Salir");
+  console.log(cyan("  1. Clima de ciudad default"));
+  console.log(cyan(`  2. Clima de todas las ciudades (${data.cities.length})`));
+  console.log(cyan("  3. Buscar y agregar ciudad"));
+  console.log(cyan("  4. Eliminar ciudad"));
+  console.log(cyan("  5. Establecer ciudad default"));
+  console.log(dim(cyan("  6. Not Found - Implementar en el futuro")));
+  console.log(dim(cyan("  7. Not Found - Implementar en el futuro")));
+  console.log(cyan(`  8. Ajustes (${unitLabel(data.unit)})`));
+  console.log(cyan("  9. Salir"));
   console.log(LINE);
 }
 
 function printCityList(data: AppData): void {
   data.cities.forEach((c, i) => {
-    const def = c.id === data.defaultCityId ? " (default)" : "";
+    const def = c.id === data.defaultCityId ? green(" (default)") : "";
     const parts = [c.name, c.admin1, c.country].filter(Boolean).join(", ");
-    console.log(`  ${i + 1}. ${parts}${def}`);
+    console.log(cyan(`  ${i + 1}. ${parts}`) + def);
   });
 }
 
@@ -51,19 +52,19 @@ function parseSelection(raw: string, max: number): number | null {
 async function optionDefault(data: AppData): Promise<void> {
   console.log("");
   if (data.defaultCityId === null) {
-    console.log("No hay ciudad default. Usa la opción 5 para establecer una.");
+    console.log(red("No hay ciudad default. Usa la opción 5 para establecer una."));
     pause();
     return;
   }
   const city = findCityById(data, data.defaultCityId);
   if (city === undefined) {
-    console.log("La ciudad default no existe en tu lista. Establece una nueva con la opción 5.");
+    console.log(red("La ciudad default no existe en tu lista. Establece una nueva con la opción 5."));
     pause();
     return;
   }
   const info = await fetchWeatherInfo(city, data.unit);
   if (info === null) {
-    console.log("No se pudo obtener el clima.");
+    console.log(red("No se pudo obtener el clima."));
   } else {
     printWeather(info);
   }
@@ -73,15 +74,15 @@ async function optionDefault(data: AppData): Promise<void> {
 async function optionAll(data: AppData): Promise<void> {
   console.log("");
   if (data.cities.length === 0) {
-    console.log("No tienes ciudades guardadas. Usa la opción 3 para agregar una.");
+    console.log(red("No tienes ciudades guardadas. Usa la opción 3 para agregar una."));
     pause();
     return;
   }
-  console.log("Clima de todas las ciudades:");
+  console.log(cyan("Clima de todas las ciudades:"));
   for (const city of data.cities) {
     const info = await fetchWeatherInfo(city, data.unit);
     if (info === null) {
-      console.log(`No se pudo obtener el clima de ${city.name}.`);
+      console.log(red(`No se pudo obtener el clima de ${city.name}.`));
     } else {
       printWeather(info);
     }
@@ -93,31 +94,31 @@ async function optionSearchAndAdd(data: AppData): Promise<void> {
   console.log("");
   const name = askQuestion("  Nombre de la ciudad: ");
   if (name.length === 0) {
-    console.log("Operación cancelada.");
+    console.log(yellow("Operación cancelada."));
     pause();
     return;
   }
   const results = await searchCities(name);
   if (results.length === 0) {
-    console.log("No se encontraron ciudades con ese nombre.");
+    console.log(red("No se encontraron ciudades con ese nombre."));
     pause();
     return;
   }
-  console.log("\nResultados encontrados:\n");
+  console.log(cyan("\nResultados encontrados:\n"));
   results.forEach((r, i) => {
     const parts = [r.name, r.admin1, r.country].filter(Boolean).join(", ");
-    console.log(`  ${i + 1}. ${parts}`);
+    console.log(cyan(`  ${i + 1}. ${parts}`));
   });
   const sel = askQuestion("\n  Selecciona una ciudad (número) o Enter para cancelar: ");
   const idx = parseSelection(sel, results.length);
   if (idx === null) {
-    console.log("Selección inválida o cancelada.");
+    console.log(red("Selección inválida o cancelada."));
     pause();
     return;
   }
   const r = results[idx];
   if (r === undefined) {
-    console.log("Selección inválida.");
+    console.log(red("Selección inválida."));
     pause();
     return;
   }
@@ -132,9 +133,9 @@ async function optionSearchAndAdd(data: AppData): Promise<void> {
   const added = addCity(data, city);
   if (added) {
     saveData(data);
-    console.log(`Ciudad "${city.name}" agregada.`);
+    console.log(green(`Ciudad "${city.name}" agregada.`));
   } else {
-    console.log(`"${city.name}" ya está en tu lista.`);
+    console.log(yellow(`"${city.name}" ya está en tu lista.`));
   }
   pause();
 }
@@ -142,56 +143,56 @@ async function optionSearchAndAdd(data: AppData): Promise<void> {
 async function optionRemove(data: AppData): Promise<void> {
   console.log("");
   if (data.cities.length === 0) {
-    console.log("No tienes ciudades guardadas.");
+    console.log(red("No tienes ciudades guardadas."));
     pause();
     return;
   }
-  console.log("Tus ciudades:\n");
+  console.log(cyan("Tus ciudades:\n"));
   printCityList(data);
   const sel = askQuestion("\n  Selecciona una ciudad para eliminar (número) o Enter para cancelar: ");
   const idx = parseSelection(sel, data.cities.length);
   if (idx === null) {
-    console.log("Selección inválida o cancelada.");
+    console.log(red("Selección inválida o cancelada."));
     pause();
     return;
   }
   const city = data.cities[idx];
   if (city === undefined) {
-    console.log("Selección inválida.");
+    console.log(red("Selección inválida."));
     pause();
     return;
   }
   removeCity(data, city.id);
   saveData(data);
-  console.log(`Ciudad "${city.name}" eliminada.`);
+  console.log(green(`Ciudad "${city.name}" eliminada.`));
   pause();
 }
 
 async function optionSetDefault(data: AppData): Promise<void> {
   console.log("");
   if (data.cities.length === 0) {
-    console.log("No tienes ciudades guardadas. Usa la opción 3 para agregar una.");
+    console.log(red("No tienes ciudades guardadas. Usa la opción 3 para agregar una."));
     pause();
     return;
   }
-  console.log("Tus ciudades:\n");
+  console.log(cyan("Tus ciudades:\n"));
   printCityList(data);
   const sel = askQuestion("\n  Selecciona una ciudad como default (número) o Enter para cancelar: ");
   const idx = parseSelection(sel, data.cities.length);
   if (idx === null) {
-    console.log("Selección inválida o cancelada.");
+    console.log(red("Selección inválida o cancelada."));
     pause();
     return;
   }
   const city = data.cities[idx];
   if (city === undefined) {
-    console.log("Selección inválida.");
+    console.log(red("Selección inválida."));
     pause();
     return;
   }
   setDefault(data, city.id);
   saveData(data);
-  console.log(`"${city.name}" es ahora la ciudad default.`);
+  console.log(green(`"${city.name}" es ahora la ciudad default.`));
   pause();
 }
 
@@ -199,14 +200,14 @@ async function optionSettings(data: AppData): Promise<void> {
   console.log("");
   toggleUnit(data);
   saveData(data);
-  console.log(`Unidad cambiada a ${unitLabel(data.unit)}.`);
+  console.log(green(`Unidad cambiada a ${unitLabel(data.unit)}.`));
   pause();
 }
 
 export async function runMenu(): Promise<void> {
   if (!process.stdin.isTTY) {
-    console.error("Esta aplicación es de consola y requiere una terminal interactiva.");
-    console.error("Ejecútala desde una terminal:  ./out/weather");
+    process.stderr.write(red("Esta aplicación es de consola y requiere una terminal interactiva.\n"));
+    process.stderr.write(yellow("Ejecútala desde una terminal:  ./out/weather\n"));
     process.exit(1);
   }
   const data = loadData();
@@ -214,7 +215,7 @@ export async function runMenu(): Promise<void> {
   while (running) {
     console.clear();
     printMenu(data);
-    const choice = askQuestion("  Selecciona una opción: ");
+    const choice = askQuestion(cyan("  Selecciona una opción: "));
     switch (choice) {
       case "1":
         await optionDefault(data);
@@ -236,10 +237,10 @@ export async function runMenu(): Promise<void> {
         break;
       case "9":
         running = false;
-        console.log("¡Hasta pronto!");
+        console.log(cyan("¡Hasta pronto!"));
         break;
       default:
-        console.log("Opción no válida.");
+        console.log(red("Opción no válida."));
         pause();
         break;
     }

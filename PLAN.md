@@ -9,7 +9,7 @@ Crear una aplicación de consola en **Bun + TypeScript** que permita consultar e
 - Runtime: **Bun** (no Node)
 - Lenguaje: TypeScript (strict)
 - APIs: OpenMeteo (Geocoding + Forecast), sin API key
-- Persistencia: archivo JSON en `~/.weather-cli/data.json`
+- Persistencia: archivo JSON en `~/.config/weather-cli/data.json` (respeta `$XDG_CONFIG_HOME`)
 - Sin dependencias externas (solo `fetch` nativo de Bun y APIs de Node vía Bun)
 
 ## Menú (numeración exacta del README)
@@ -41,7 +41,7 @@ src/
   │   ├── geocoding.ts  → Cliente OpenMeteo Geocoding API
   │   └── forecast.ts   → Cliente OpenMeteo Forecast API + descripciones de weather_code
   ├── storage/
-  │   └── store.ts      → Persistencia JSON en ~/.weather-cli/data.json
+  │   └── store.ts      → Persistencia JSON en ~/.config/weather-cli/data.json
   └── menu.ts           → Renderizado del menú y manejo de opciones
 ```
 
@@ -59,7 +59,7 @@ src/
 
 ## Persistencia
 
-**Ubicación:** `~/.weather-cli/data.json`
+**Ubicación:** `~/.config/weather-cli/data.json` (o `$XDG_CONFIG_HOME/weather-cli/data.json`). Migra automáticamente desde `~/.weather-cli/data.json` si existe.
 
 **Estructura:**
 ```json

@@ -2,9 +2,38 @@ import type { AppData, City, Unit } from "../types.ts";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { yellow, red } from "../colors.ts";
 
-const DATA_DIR = join(homedir(), ".weather-cli");
+const LEGACY_DATA_FILE = join(homedir(), ".weather-cli", "data.json");
+const DATA_DIR = join(
+  process.env.XDG_CONFIG_HOME ?? join(homedir(), ".config"),
+  "weather-cli",
+);
 const DATA_FILE = join(DATA_DIR, "data.json");
+
+function parseAppData(raw: string): AppData {
+  const parsed = JSON.parse(raw) as Partial<AppData>;
+  return {
+    defaultCityId: parsed.defaultCityId ?? null,
+    cities: Array.isArray(parsed.cities) ? (parsed.cities as City[]) : [],
+    unit: parsed.unit === "fahrenheit" ? "fahrenheit" : "celsius",
+  };
+}
+
+function migrateLegacyData(): void {
+  if (existsSync(DATA_FILE) || !existsSync(LEGACY_DATA_FILE)) {
+    return;
+  }
+  try {
+    if (!existsSync(DATA_DIR)) {
+      mkdirSync(DATA_DIR, { recursive: true });
+    }
+    const raw = readFileSync(LEGACY_DATA_FILE, "utf-8");
+    writeFileSync(DATA_FILE, raw, "utf-8");
+  } catch {
+    // Si falla la migración, loadData usará valores por defecto.
+  }
+}
 
 export function getDefaultData(): AppData {
   return {
@@ -15,19 +44,15 @@ export function getDefaultData(): AppData {
 }
 
 export function loadData(): AppData {
+  migrateLegacyData();
   try {
     if (!existsSync(DATA_FILE)) {
       return getDefaultData();
     }
     const raw = readFileSync(DATA_FILE, "utf-8");
-    const parsed = JSON.parse(raw) as Partial<AppData>;
-    return {
-      defaultCityId: parsed.defaultCityId ?? null,
-      cities: Array.isArray(parsed.cities) ? (parsed.cities as City[]) : [],
-      unit: parsed.unit === "fahrenheit" ? "fahrenheit" : "celsius",
-    };
+    return parseAppData(raw);
   } catch {
-    console.log("⚠ Aviso: no se pudo leer el archivo de datos. Se usarán valores por defecto.");
+    console.log(yellow("⚠ Aviso: no se pudo leer el archivo de datos. Se usarán valores por defecto."));
     return getDefaultData();
   }
 }
@@ -39,7 +64,7 @@ export function saveData(data: AppData): void {
     }
     writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
-    console.log("⚠ Error al guardar los datos:", err);
+    console.log(red("⚠ Error al guardar los datos:"), err);
   }
 }
 
