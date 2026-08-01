@@ -1,34 +1,5 @@
-export interface City {
-  id: string;
-  name: string;
-  country: string;
-  admin1: string;
-  latitude: number;
-  longitude: number;
-}
-
-export type Unit = "celsius" | "fahrenheit";
-
-export interface AppData {
-  defaultCityId: string | null;
-  cities: City[];
-  unit: Unit;
-}
-
-export interface GeocodingResult {
-  id: number;
-  name: string;
-  latitude: number;
-  longitude: number;
-  country: string;
-  admin1: string;
-}
-
-export interface GeocodingResponse {
-  results?: GeocodingResult[];
-  error?: boolean;
-  reason?: string;
-}
+import type { City } from "./City.ts";
+import type { Unit } from "./Settings.ts";
 
 export interface ForecastCurrent {
   temperature_2m: number;
@@ -59,6 +30,17 @@ export interface DailyForecastResponse {
   reason?: string;
 }
 
+export interface WeatherInfo {
+  city: City;
+  temperature: number;
+  apparentTemperature: number;
+  humidity: number;
+  windSpeed: number;
+  weatherCode: number;
+  weatherDescription: string;
+  unit: Unit;
+}
+
 export interface DayForecast {
   date: string;
   dayName: string;
@@ -74,16 +56,5 @@ export interface DayForecast {
 export interface WeeklyForecast {
   city: City;
   days: DayForecast[];
-  unit: Unit;
-}
-
-export interface WeatherInfo {
-  city: City;
-  temperature: number;
-  apparentTemperature: number;
-  humidity: number;
-  windSpeed: number;
-  weatherCode: number;
-  weatherDescription: string;
   unit: Unit;
 }

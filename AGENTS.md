@@ -4,8 +4,8 @@ Weather CLI app (Spanish-language UI). Console app that asks for a city and repo
 
 ## Runtime & toolchain
 
-- Runtime is **Bun**, not Node. Use `bun` for everything: `bun install`, `bun run index.ts`, `bunx tsc --noEmit`.
-- `package.json` has **no `scripts`** — run commands directly with `bun`.
+- Runtime is **Bun**, not Node. Use `bun` for everything: `bun install`, `bun run src/index.ts`, `bunx tsc --noEmit`.
+- `package.json` scripts: `start`, `dev`, `typecheck`, `build`.
 - `bun-instructions.md` is an empty placeholder; don't expect guidance there.
 
 ## TypeScript constraints (tsconfig.json)
@@ -18,8 +18,21 @@ Weather CLI app (Spanish-language UI). Console app that asks for a city and repo
 
 ## Build
 
-- Produce the executable with `bun build --compile ./index.ts --outfile out/weather` (or similar). `out/` and `dist/` are gitignored.
-- Entry point is `index.ts` at repo root (`package.json` `module` field).
+- Produce the executable with `bun build --compile ./src/index.ts --outfile out/weather` (or `bun run build`). `out/` and `dist/` are gitignored.
+- Entry point is `src/index.ts` (`package.json` `module` field).
+
+## Project structure
+
+```
+src/
+├── actions/          # User-facing operations (getWeather, addCity, etc.)
+├── presentation/     # CLI menu, input, output
+├── storage/          # citiesStorage, settingsStorage
+├── types/            # City, Weather, Settings, Geocoding, MenuOption
+├── api/              # geocoding, weather (OpenMeteo)
+├── utils/            # colors, format, constants
+└── index.ts          # Entry point
+```
 
 ## Testing
 
@@ -28,8 +41,10 @@ Weather CLI app (Spanish-language UI). Console app that asks for a city and repo
 ## App data flow
 
 No API key or `.env` required. Two OpenMeteo HTTP calls, in order:
-1. Geocoding: `https://geocoding-api.open-meteo.com/v1/search?name=<city>&count=1&language=es&format=json`
-2. Forecast: `https://api.open-meteo.com/v1/forecast?latitude=<lat>&longitude=<lon>&current=temperature_2m`
+1. Geocoding: `https://geocoding-api.open-meteo.com/v1/search?name=<city>&count=5&language=es&format=json`
+2. Forecast: `https://api.open-meteo.com/v1/forecast?latitude=<lat>&longitude=<lon>&current=temperature_2m,...`
+
+Data persisted at `~/.config/weather-cli/data.json` (migrated from legacy `~/.weather-cli/data.json`).
 
 ## Conventions
 
