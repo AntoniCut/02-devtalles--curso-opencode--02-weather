@@ -1,4 +1,4 @@
-import type { ForecastResponse, Unit } from "../types.ts";
+import type { ForecastResponse, DailyForecastResponse, Unit } from "../types.ts";
 import { red } from "../colors.ts";
 
 const FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
@@ -16,6 +16,25 @@ export async function getForecast(
       return null;
     }
     return (await res.json()) as ForecastResponse;
+  } catch (err) {
+    console.log(red("✗ No se pudo conectar con el servicio de pronóstico:"), err);
+    return null;
+  }
+}
+
+export async function getDailyForecast(
+  latitude: number,
+  longitude: number,
+  unit: Unit,
+): Promise<DailyForecastResponse | null> {
+  const url = `${FORECAST_URL}?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&forecast_days=7&temperature_unit=${unit}&timezone=auto`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.log(red(`✗ Error de red (${res.status}). Intenta de nuevo.`));
+      return null;
+    }
+    return (await res.json()) as DailyForecastResponse;
   } catch (err) {
     console.log(red("✗ No se pudo conectar con el servicio de pronóstico:"), err);
     return null;

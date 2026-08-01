@@ -11,7 +11,7 @@ import {
   unitLabel,
 } from "./storage/store.ts";
 import { searchCities } from "./api/geocoding.ts";
-import { fetchWeatherInfo, printWeather } from "./weather.ts";
+import { fetchWeatherInfo, printWeather, fetchWeeklyForecast, printWeeklyForecast } from "./weather.ts";
 import { askQuestion, pause, closeInput } from "./input.ts";
 import { cyan, bold, green, red, yellow, dim } from "./colors.ts";
 
@@ -26,7 +26,7 @@ function printMenu(data: AppData): void {
   console.log(cyan("  3. Buscar y agregar ciudad"));
   console.log(cyan("  4. Eliminar ciudad"));
   console.log(cyan("  5. Establecer ciudad default"));
-  console.log(dim("  6. Not Found - Implementar en el futuro"));
+  console.log(cyan("  6. Pronóstico 7 días"));
   console.log(dim("  7. Not Found - Implementar en el futuro"));
   console.log(cyan(`  8. Ajustes (${unitLabel(data.unit)})`));
   console.log(cyan("  9. Salir"));
@@ -86,6 +86,37 @@ async function optionAll(data: AppData): Promise<void> {
     } else {
       printWeather(info);
     }
+  }
+  pause();
+}
+
+async function optionForecast7days(data: AppData): Promise<void> {
+  console.log("");
+  if (data.cities.length === 0) {
+    console.log(yellow("No tienes ciudades guardadas. Usa la opción 3 para agregar una."));
+    pause();
+    return;
+  }
+  console.log(cyan("Tus ciudades:\n"));
+  printCityList(data);
+  const sel = askQuestion("\n  Selecciona una ciudad (número) o Enter para cancelar: ");
+  const idx = parseSelection(sel, data.cities.length);
+  if (idx === null) {
+    console.log(red("Selección inválida o cancelada."));
+    pause();
+    return;
+  }
+  const city = data.cities[idx];
+  if (city === undefined) {
+    console.log(red("Selección inválida."));
+    pause();
+    return;
+  }
+  const weekly = await fetchWeeklyForecast(city, data.unit);
+  if (weekly === null) {
+    console.log(red("No se pudo obtener el pronóstico."));
+  } else {
+    printWeeklyForecast(weekly);
   }
   pause();
 }
@@ -231,6 +262,9 @@ export async function runMenu(): Promise<void> {
         break;
       case "5":
         await optionSetDefault(data);
+        break;
+      case "6":
+        await optionForecast7days(data);
         break;
       case "8":
         await optionSettings(data);
