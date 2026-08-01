@@ -25,6 +25,8 @@ function printMenu(data: AppData): void {
   console.log("  3. Buscar y agregar ciudad");
   console.log("  4. Eliminar ciudad");
   console.log("  5. Establecer ciudad default");
+  console.log("  6. Not Found - Implementar en el futuro");
+  console.log("  7. Not Found - Implementar en el futuro");
   console.log(`  8. Ajustes (${unitLabel(data.unit)})`);
   console.log("  9. Salir");
   console.log(LINE);
