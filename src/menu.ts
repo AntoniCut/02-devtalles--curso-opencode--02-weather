@@ -202,6 +202,11 @@ async function optionSettings(data: AppData): Promise<void> {
 }
 
 export async function runMenu(): Promise<void> {
+  if (!process.stdin.isTTY) {
+    console.error("Esta aplicación es de consola y requiere una terminal interactiva.");
+    console.error("Ejecútala desde una terminal:  ./out/weather");
+    process.exit(1);
+  }
   const data = loadData();
   let running = true;
   while (running) {
