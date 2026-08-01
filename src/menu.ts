@@ -50,13 +50,13 @@ async function optionDefault(data: AppData): Promise<void> {
   console.log("");
   if (data.defaultCityId === null) {
     console.log("No hay ciudad default. Usa la opción 5 para establecer una.");
-    await pause();
+    pause();
     return;
   }
   const city = findCityById(data, data.defaultCityId);
   if (city === undefined) {
     console.log("La ciudad default no existe en tu lista. Establece una nueva con la opción 5.");
-    await pause();
+    pause();
     return;
   }
   const info = await fetchWeatherInfo(city, data.unit);
@@ -65,14 +65,14 @@ async function optionDefault(data: AppData): Promise<void> {
   } else {
     printWeather(info);
   }
-  await pause();
+  pause();
 }
 
 async function optionAll(data: AppData): Promise<void> {
   console.log("");
   if (data.cities.length === 0) {
     console.log("No tienes ciudades guardadas. Usa la opción 3 para agregar una.");
-    await pause();
+    pause();
     return;
   }
   console.log("Clima de todas las ciudades:");
@@ -84,21 +84,21 @@ async function optionAll(data: AppData): Promise<void> {
       printWeather(info);
     }
   }
-  await pause();
+  pause();
 }
 
 async function optionSearchAndAdd(data: AppData): Promise<void> {
   console.log("");
-  const name = await askQuestion("  Nombre de la ciudad: ");
+  const name = askQuestion("  Nombre de la ciudad: ");
   if (name.length === 0) {
     console.log("Operación cancelada.");
-    await pause();
+    pause();
     return;
   }
   const results = await searchCities(name);
   if (results.length === 0) {
     console.log("No se encontraron ciudades con ese nombre.");
-    await pause();
+    pause();
     return;
   }
   console.log("\nResultados encontrados:\n");
@@ -106,17 +106,17 @@ async function optionSearchAndAdd(data: AppData): Promise<void> {
     const parts = [r.name, r.admin1, r.country].filter(Boolean).join(", ");
     console.log(`  ${i + 1}. ${parts}`);
   });
-  const sel = await askQuestion("\n  Selecciona una ciudad (número) o Enter para cancelar: ");
+  const sel = askQuestion("\n  Selecciona una ciudad (número) o Enter para cancelar: ");
   const idx = parseSelection(sel, results.length);
   if (idx === null) {
     console.log("Selección inválida o cancelada.");
-    await pause();
+    pause();
     return;
   }
   const r = results[idx];
   if (r === undefined) {
     console.log("Selección inválida.");
-    await pause();
+    pause();
     return;
   }
   const city: City = {
@@ -134,63 +134,63 @@ async function optionSearchAndAdd(data: AppData): Promise<void> {
   } else {
     console.log(`"${city.name}" ya está en tu lista.`);
   }
-  await pause();
+  pause();
 }
 
 async function optionRemove(data: AppData): Promise<void> {
   console.log("");
   if (data.cities.length === 0) {
     console.log("No tienes ciudades guardadas.");
-    await pause();
+    pause();
     return;
   }
   console.log("Tus ciudades:\n");
   printCityList(data);
-  const sel = await askQuestion("\n  Selecciona una ciudad para eliminar (número) o Enter para cancelar: ");
+  const sel = askQuestion("\n  Selecciona una ciudad para eliminar (número) o Enter para cancelar: ");
   const idx = parseSelection(sel, data.cities.length);
   if (idx === null) {
     console.log("Selección inválida o cancelada.");
-    await pause();
+    pause();
     return;
   }
   const city = data.cities[idx];
   if (city === undefined) {
     console.log("Selección inválida.");
-    await pause();
+    pause();
     return;
   }
   removeCity(data, city.id);
   saveData(data);
   console.log(`Ciudad "${city.name}" eliminada.`);
-  await pause();
+  pause();
 }
 
 async function optionSetDefault(data: AppData): Promise<void> {
   console.log("");
   if (data.cities.length === 0) {
     console.log("No tienes ciudades guardadas. Usa la opción 3 para agregar una.");
-    await pause();
+    pause();
     return;
   }
   console.log("Tus ciudades:\n");
   printCityList(data);
-  const sel = await askQuestion("\n  Selecciona una ciudad como default (número) o Enter para cancelar: ");
+  const sel = askQuestion("\n  Selecciona una ciudad como default (número) o Enter para cancelar: ");
   const idx = parseSelection(sel, data.cities.length);
   if (idx === null) {
     console.log("Selección inválida o cancelada.");
-    await pause();
+    pause();
     return;
   }
   const city = data.cities[idx];
   if (city === undefined) {
     console.log("Selección inválida.");
-    await pause();
+    pause();
     return;
   }
   setDefault(data, city.id);
   saveData(data);
   console.log(`"${city.name}" es ahora la ciudad default.`);
-  await pause();
+  pause();
 }
 
 async function optionSettings(data: AppData): Promise<void> {
@@ -198,7 +198,7 @@ async function optionSettings(data: AppData): Promise<void> {
   toggleUnit(data);
   saveData(data);
   console.log(`Unidad cambiada a ${unitLabel(data.unit)}.`);
-  await pause();
+  pause();
 }
 
 export async function runMenu(): Promise<void> {
@@ -207,7 +207,7 @@ export async function runMenu(): Promise<void> {
   while (running) {
     console.clear();
     printMenu(data);
-    const choice = await askQuestion("  Selecciona una opción: ");
+    const choice = askQuestion("  Selecciona una opción: ");
     switch (choice) {
       case "1":
         await optionDefault(data);
@@ -233,7 +233,7 @@ export async function runMenu(): Promise<void> {
         break;
       default:
         console.log("Opción no válida.");
-        await pause();
+        pause();
         break;
     }
   }

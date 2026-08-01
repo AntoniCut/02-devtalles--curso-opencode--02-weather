@@ -1,28 +1,12 @@
-import * as readline from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
-
-let rl: ReturnType<typeof readline.createInterface> | null = null;
-
-function getInterface(): ReturnType<typeof readline.createInterface> {
-  if (rl === null) {
-    rl = readline.createInterface({ input, output });
-  }
-  return rl;
+export function askQuestion(promptText: string): string {
+  const answer = prompt(promptText);
+  return answer === null ? "" : answer.trim();
 }
 
-export async function askQuestion(prompt: string): Promise<string> {
-  const iface = getInterface();
-  const answer = await iface.question(prompt);
-  return answer.trim();
-}
-
-export async function pause(): Promise<void> {
-  await askQuestion("  Presiona Enter para continuar...");
+export function pause(): void {
+  prompt("  Presiona Enter para continuar...");
 }
 
 export function closeInput(): void {
-  if (rl !== null) {
-    rl.close();
-    rl = null;
-  }
+  // Bun's global prompt() needs no teardown.
 }
