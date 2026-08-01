@@ -1,4 +1,5 @@
 import type { AppData, City, Unit } from "../types.ts";
+import { yellow, red } from "../colors.ts";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -51,7 +52,7 @@ export function loadData(): AppData {
     const raw = readFileSync(DATA_FILE, "utf-8");
     return parseAppData(raw);
   } catch {
-    console.log("⚠ Aviso: no se pudo leer el archivo de datos. Se usarán valores por defecto.");
+    console.log(yellow("⚠ Aviso: no se pudo leer el archivo de datos. Se usarán valores por defecto."));
     return getDefaultData();
   }
 }
@@ -63,7 +64,7 @@ export function saveData(data: AppData): void {
     }
     writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
-    console.log("⚠ Error al guardar los datos:", err);
+    console.log(red("⚠ Error al guardar los datos:"), err);
   }
 }
 

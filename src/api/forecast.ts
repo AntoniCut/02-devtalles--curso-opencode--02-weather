@@ -1,4 +1,5 @@
 import type { ForecastResponse, Unit } from "../types.ts";
+import { red } from "../colors.ts";
 
 const FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -11,12 +12,12 @@ export async function getForecast(
   try {
     const res = await fetch(url);
     if (!res.ok) {
-      console.log(`✗ Error de red (${res.status}). Intenta de nuevo.`);
+      console.log(red(`✗ Error de red (${res.status}). Intenta de nuevo.`));
       return null;
     }
     return (await res.json()) as ForecastResponse;
   } catch (err) {
-    console.log("✗ No se pudo conectar con el servicio de pronóstico:", err);
+    console.log(red("✗ No se pudo conectar con el servicio de pronóstico:"), err);
     return null;
   }
 }

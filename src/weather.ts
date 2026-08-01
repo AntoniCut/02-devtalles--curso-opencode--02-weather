@@ -1,5 +1,6 @@
 import type { City, Unit, WeatherInfo } from "./types.ts";
 import { getForecast, weatherCodeDescription } from "./api/forecast.ts";
+import { cyan, yellow, bold, dim } from "./colors.ts";
 
 export async function fetchWeatherInfo(
   city: City,
@@ -28,10 +29,10 @@ export function printWeather(info: WeatherInfo): void {
     .filter(Boolean)
     .join(", ");
   console.log("");
-  console.log(`  Clima de: ${location}`);
-  console.log(`   ${info.weatherDescription}`);
-  console.log(`   Temperatura:  ${info.temperature}${label} (sensación ${info.apparentTemperature}${label})`);
-  console.log(`   Humedad:      ${info.humidity}%`);
-  console.log(`   Viento:       ${info.windSpeed} km/h`);
+  console.log(cyan(`  Clima de: ${location}`));
+  console.log(cyan(`   ${info.weatherDescription}`));
+  console.log(`   Temperatura:  ${bold(yellow(`${info.temperature}${label}`))} (sensación ${bold(yellow(`${info.apparentTemperature}${label}`))})`);
+  console.log(dim(`   Humedad:      ${info.humidity}%`));
+  console.log(dim(`   Viento:       ${info.windSpeed} km/h`));
   console.log("");
 }
