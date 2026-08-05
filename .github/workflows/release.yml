@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            archive_ext: tar.gz
+            binary_name: weather
+          - os: macos-latest
+            archive_ext: tar.gz
+            binary_name: weather
+          - os: windows-latest
+            archive_ext: zip
+            binary_name: weather.exe
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG=${GITHUB_REF#refs/tags/}
+          if [ "v$VERSION" != "$TAG" ]; then
+            echo "::error::package.json version ($VERSION) does not match tag ($TAG)"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "TAG=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Tests
+        run: bun run test
+
+      - name: Build
+        run: bun run build
+
+      - name: Package
+        shell: bash
+        run: |
+          mkdir -p release
+          cd release
+          mv ../out/weather ./${{ matrix.binary_name }}
+          if [ "${{ matrix.archive_ext }}" = "tar.gz" ]; then
+            tar czf "${{ matrix.binary_name }}-${{ steps.version.outputs.VERSION }}-${{ runner.os }}-${{ runner.arch }}.tar.gz" "${{ matrix.binary_name }}"
+          else
+            7z a "${{ matrix.binary_name }}-${{ steps.version.outputs.VERSION }}-${{ runner.os }}-${{ runner.arch }}.zip" "${{ matrix.binary_name }}"
+          fi
+          ls -la
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ steps.version.outputs.VERSION }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            release/${{ matrix.binary_name }}-${{ steps.version.outputs.VERSION }}-${{ runner.os }}-${{ runner.arch }}.${{ matrix.archive_ext }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
