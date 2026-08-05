@@ -1,3 +1,10 @@
+/*
+    *  -------------------------------------------------  *
+    *  -----  format.ts  --  /src/utils/format.ts  -----  *
+    *  -------------------------------------------------  *
+*/
+
+
 import type { City } from "../types/City.ts";
 import type { Unit } from "../types/Settings.ts";
 
@@ -11,27 +18,67 @@ const SPANISH_DAYS = [
   "sábado",
 ];
 
-export function dayNameFromDate(dateStr: string): string {
+
+/**
+ * ----------------------------------------
+ * -----  `dayNameFromDate(dateStr)`  -----
+ * ----------------------------------------
+ * - Devuelve el nombre del día en español para la fecha dada.
+ */
+
+export const dayNameFromDate = (dateStr: string): string => {
   const d = new Date(`${dateStr}T00:00:00`);
   const idx = d.getDay();
   const name = SPANISH_DAYS[idx];
   return name ?? dateStr;
-}
+};
 
-export function compactDate(dateStr: string): string {
+
+/**
+ * ------------------------------------
+ * -----  `compactDate(dateStr)`  -----
+ * ------------------------------------
+ * - Formatea la fecha como dd/mm.
+ */
+
+export const compactDate = (dateStr: string): string => {
   const d = new Date(`${dateStr}T00:00:00`);
   return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
-}
+};
 
-export function formatLocation(city: City): string {
+
+/**
+ * ------------------------------------
+ * -----  `formatLocation(city)`  -----
+ * ------------------------------------
+ * - Concatena nombre, región y país de la ciudad.
+ */
+
+export const formatLocation = (city: City): string => {
   return [city.name, city.admin1, city.country].filter(Boolean).join(", ");
-}
+};
 
-export function unitSymbol(unit: Unit): string {
+
+/**
+ * --------------------------------
+ * -----  `unitSymbol(unit)`  -----
+ * --------------------------------
+ * - Devuelve el símbolo de unidad (°C / °F).
+ */
+
+export const unitSymbol = (unit: Unit): string => {
   return unit === "celsius" ? "°C" : "°F";
-}
+};
 
-export function weatherCodeDescription(code: number): string {
+
+/**
+ * --------------------------------------------
+ * -----  `weatherCodeDescription(code)`  -----
+ * --------------------------------------------
+ * - Traduce el código de clima de OpenMeteo a una descripción en español.
+ */
+
+export const weatherCodeDescription = (code: number): string => {
   const map: Record<number, string> = {
     0: "Despejado",
     1: "Mayormente despejado",
@@ -63,4 +110,4 @@ export function weatherCodeDescription(code: number): string {
     99: "Tormenta con granizo intenso",
   };
   return map[code] ?? "Desconocido";
-}
+};

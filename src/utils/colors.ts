@@ -1,3 +1,9 @@
+/*
+    *  -------------------------------------------------  *
+    *  -----  colors.ts  --  /src/utils/colors.ts  -----  *
+    *  -------------------------------------------------  *
+*/
+
 const RESET = "\x1b[0m";
 
 const codes = {
@@ -15,9 +21,18 @@ const forceColor = process.env.FORCE_COLOR !== undefined;
 
 export const colorsEnabled = (isTTY || forceColor) && !noColor;
 
-function wrap(open: string, s: string): string {
+
+/**
+ * -----------------------------
+ * -----  `wrap(open, s)`  -----
+ * -----------------------------
+ * - Envuelve el string con el código ANSI de apertura y el reset.
+ */
+
+const wrap = (open: string, s: string): string => {
   return colorsEnabled ? `${open}${s}${RESET}` : s;
-}
+};
+
 
 export const cyan = (s: string): string => wrap(codes.cyan, s);
 export const yellow = (s: string): string => wrap(codes.yellow, s);

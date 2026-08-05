@@ -1,3 +1,9 @@
+/*
+    *  -------------------------------------------------------  *
+    *  -----  Geocoding.ts  --  /src/types/Geocoding.ts  -----  *
+    *  -------------------------------------------------------  *
+*/
+
 export interface GeocodingResult {
   id: number;
   name: string;

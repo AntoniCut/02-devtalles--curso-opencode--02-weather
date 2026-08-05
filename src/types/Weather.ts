@@ -1,3 +1,9 @@
+/*
+    *  ---------------------------------------------------  *
+    *  -----  Weather.ts  --  /src/types/Weather.ts  -----  *
+    *  ---------------------------------------------------  *
+*/
+
 import type { City } from "./City.ts";
 import type { Unit } from "./Settings.ts";
 

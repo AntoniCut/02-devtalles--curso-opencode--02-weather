@@ -1,3 +1,9 @@
+/*
+    *  ---------------------------------------------------------  *
+    *  -----  MenuOption.ts  --  /src/types/MenuOption.ts  -----  *
+    *  ---------------------------------------------------------  *
+*/
+
 import type { AppData } from "./Settings.ts";
 
 export interface MenuOption {

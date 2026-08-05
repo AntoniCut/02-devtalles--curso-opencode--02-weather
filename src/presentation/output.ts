@@ -1,14 +1,28 @@
+/*
+    *  --------------------------------------------------------  *
+    *  -----  output.ts  --  /src/presentation/output.ts  -----  *
+    *  --------------------------------------------------------  *
+*/
+
+
 import type { AppData } from "../types/Settings.ts";
 import type { WeatherInfo, WeeklyForecast } from "../types/Weather.ts";
 import type { GeocodingResult } from "../types/Geocoding.ts";
-import type { City } from "../types/City.ts";
 import { cyan, bold, green, red, yellow, dim } from "../utils/colors.ts";
 import { MENU_WIDTH } from "../utils/constants.ts";
 import { compactDate, formatLocation, unitSymbol } from "../utils/format.ts";
 
 const LINE = cyan("═".repeat(MENU_WIDTH));
 
-export function printMenu(data: AppData, unitLabel: string): void {
+
+/**
+ * ------------------------------------------
+ * -----  `printMenu(data, unitLabel)`  -----
+ * ------------------------------------------
+ * - Imprime el menú principal con la unidad actual.
+ */
+
+export const printMenu = (data: AppData, unitLabel: string): void => {
   console.log(LINE);
   console.log(bold(cyan("         WEATHER CLI")));
   console.log(LINE);
@@ -22,25 +36,49 @@ export function printMenu(data: AppData, unitLabel: string): void {
   console.log(cyan(`  8. Ajustes (${unitLabel})`));
   console.log(cyan("  9. Salir"));
   console.log(LINE);
-}
+};
 
-export function printCityList(data: AppData): void {
+
+/**
+ * -----------------------------------
+ * -----  `printCityList(data)`  -----
+ * -----------------------------------
+ * - Imprime la lista de ciudades guardadas numeradas.
+ */
+
+export const printCityList = (data: AppData): void => {
   data.cities.forEach((c, i) => {
     const def = c.id === data.defaultCityId ? cyan(" (default)") : "";
     const parts = [c.name, c.admin1, c.country].filter(Boolean).join(", ");
     console.log(`  ${i + 1}. ${parts}${def}`);
   });
-}
+};
 
-export function printGeocodingResults(results: GeocodingResult[]): void {
+
+/**
+ * ----------------------------------------------
+ * -----  `printGeocodingResults(results)`  -----
+ * ----------------------------------------------
+ * - Imprime los resultados de búsqueda de ciudades numerados.
+ */
+
+export const printGeocodingResults = (results: GeocodingResult[]): void => {
   console.log(cyan("\nResultados encontrados:\n"));
   results.forEach((r, i) => {
     const parts = [r.name, r.admin1, r.country].filter(Boolean).join(", ");
     console.log(`  ${i + 1}. ${parts}`);
   });
-}
+};
 
-export function printWeather(info: WeatherInfo): void {
+
+/**
+ * ----------------------------------
+ * -----  `printWeather(info)`  -----
+ * ----------------------------------
+ * - Imprime el clima actual de una ciudad con colores.
+ */
+
+export const printWeather = (info: WeatherInfo): void => {
   const label = unitSymbol(info.unit);
   const location = formatLocation(info.city);
   console.log("");
@@ -50,9 +88,17 @@ export function printWeather(info: WeatherInfo): void {
   console.log(dim(`   Humedad:      ${info.humidity}%`));
   console.log(dim(`   Viento:       ${info.windSpeed} km/h`));
   console.log("");
-}
+};
 
-export function printWeeklyForecast(weekly: WeeklyForecast): void {
+
+/**
+ * -------------------------------------------
+ * -----  `printWeeklyForecast(weekly)`  -----
+ * -------------------------------------------
+ * - Imprime la tabla de pronóstico de 7 días con colores.
+ */
+
+export const printWeeklyForecast = (weekly: WeeklyForecast): void => {
   const label = unitSymbol(weekly.unit);
   const location = formatLocation(weekly.city);
   console.log("");
@@ -69,101 +115,291 @@ export function printWeeklyForecast(weekly: WeeklyForecast): void {
     console.log(`  ${fecha}${dia}${clima}${mx}${mn}${lluvia}${viento}`);
   }
   console.log("");
-}
+};
 
-export function printNoDefaultCity(): void {
+
+/**
+ * ------------------------------------
+ * -----  `printNoDefaultCity()`  -----
+ * ------------------------------------
+ * - Avisa que no hay ciudad default.
+ */
+
+export const printNoDefaultCity = (): void => {
   console.log(yellow("No hay ciudad default. Usa la opción 5 para establecer una."));
-}
+};
 
-export function printDefaultCityMissing(): void {
+/**
+ * -----------------------------------------
+ * -----  `printDefaultCityMissing()`  -----
+ * -----------------------------------------
+ * - Avisa que la ciudad default no existe en la lista.
+ */
+
+export const printDefaultCityMissing = (): void => {
   console.log(yellow("La ciudad default no existe en tu lista. Establece una nueva con la opción 5."));
-}
+};
 
-export function printWeatherFetchError(): void {
+
+/**
+ * ----------------------------------------
+ * -----  `printWeatherFetchError()`  -----
+ * ----------------------------------------
+ * - Avisa que no se pudo obtener el clima.
+ */
+export const printWeatherFetchError = (): void => {
   console.log(red("No se pudo obtener el clima."));
-}
+};
 
-export function printCityWeatherFetchError(cityName: string): void {
+
+/**
+ * ----------------------------------------------------
+ * -----  `printCityWeatherFetchError(cityName)`  -----
+ * ----------------------------------------------------
+ * - Avisa que no se pudo obtener el clima de una ciudad concreta.
+ */
+
+export const printCityWeatherFetchError = (cityName: string): void => {
   console.log(red(`No se pudo obtener el clima de ${cityName}.`));
-}
+};
 
-export function printNoSavedCities(): void {
+
+/**
+ * ------------------------------------
+ * -----  `printNoSavedCities()`  -----
+ * ------------------------------------
+ * - Avisa que no hay ciudades y sugiere agregar una.
+ */
+
+export const printNoSavedCities = (): void => {
   console.log(yellow("No tienes ciudades guardadas. Usa la opción 3 para agregar una."));
-}
+};
 
-export function printNoSavedCitiesShort(): void {
+
+/**
+ * -----------------------------------------
+ * -----  `printNoSavedCitiesShort()`  -----
+ * -----------------------------------------
+ * - Avisa que no hay ciudades guardadas.
+ */
+
+export const printNoSavedCitiesShort = (): void => {
   console.log(yellow("No tienes ciudades guardadas."));
-}
+};
 
-export function printAllCitiesHeader(): void {
+
+/**
+ * --------------------------------------
+ * -----  `printAllCitiesHeader()`  -----
+ * --------------------------------------
+ * - Imprime la cabecera del clima de todas las ciudades.
+ */
+
+export const printAllCitiesHeader = (): void => {
   console.log(cyan("Clima de todas las ciudades:"));
-}
+};
 
-export function printYourCitiesHeader(): void {
+
+/**
+ * ---------------------------------------
+ * -----  `printYourCitiesHeader()`  -----
+ * ---------------------------------------
+ * - Imprime la cabecera de la lista de tus ciudades.
+ */
+
+export const printYourCitiesHeader = (): void => {
   console.log(cyan("Tus ciudades:\n"));
-}
+};
 
-export function printInvalidSelection(): void {
+
+/**
+ * ---------------------------------------
+ * -----  `printInvalidSelection()`  -----
+ * ---------------------------------------
+ * - Avisa selección inválida o cancelada.
+ */
+
+export const printInvalidSelection = (): void => {
   console.log(red("Selección inválida o cancelada."));
-}
+};
 
-export function printInvalidSelectionOnly(): void {
+
+/**
+ * -------------------------------------------
+ * -----  `printInvalidSelectionOnly()`  -----
+ * -------------------------------------------
+ * - Avisa selección inválida.
+ */
+
+export const printInvalidSelectionOnly = (): void => {
   console.log(red("Selección inválida."));
-}
+};
 
-export function printForecastFetchError(): void {
+
+/**
+ * -----------------------------------------
+ * -----  `printForecastFetchError()`  -----
+ * -----------------------------------------
+ * - Avisa que no se pudo obtener el pronóstico.
+ */
+
+export const printForecastFetchError = (): void => {
   console.log(red("No se pudo obtener el pronóstico."));
-}
+};
 
-export function printOperationCancelled(): void {
+
+/**
+ * -----------------------------------------
+ * -----  `printOperationCancelled()`  -----
+ * -----------------------------------------
+ * - Avisa que la operación fue cancelada.
+ */
+
+export const printOperationCancelled = (): void => {
   console.log(dim("Operación cancelada."));
-}
+};
 
-export function printNoGeocodingResults(): void {
+
+/**
+ * -----------------------------------------
+ * -----  `printNoGeocodingResults()`  -----
+ * -----------------------------------------
+ * - Avisa que no se encontraron ciudades.
+ */
+
+export const printNoGeocodingResults = (): void => {
   console.log(red("No se encontraron ciudades con ese nombre."));
-}
+};
 
-export function printCityAdded(cityName: string): void {
+
+/**
+ * ----------------------------------------
+ * -----  `printCityAdded(cityName)`  -----
+ * ----------------------------------------
+ * - Confirma que la ciudad fue agregada.
+ */
+
+export const printCityAdded = (cityName: string): void => {
   console.log(green(`Ciudad "${cityName}" agregada.`));
-}
+};
 
-export function printCityAlreadyExists(cityName: string): void {
+
+/**
+ * ------------------------------------------------
+ * -----  `printCityAlreadyExists(cityName)`  -----
+ * ------------------------------------------------
+ * - Avisa que la ciudad ya estaba en la lista.
+ */
+
+export const printCityAlreadyExists = (cityName: string): void => {
   console.log(yellow(`"${cityName}" ya está en tu lista.`));
-}
+};
 
-export function printCityRemoved(cityName: string): void {
+
+/**
+ * ------------------------------------------
+ * -----  `printCityRemoved(cityName)`  -----
+ * ------------------------------------------
+ * - Confirma que la ciudad fue eliminada.
+ */
+
+export const printCityRemoved = (cityName: string): void => {
   console.log(green(`Ciudad "${cityName}" eliminada.`));
-}
+};
 
-export function printDefaultCitySet(cityName: string): void {
+
+/**
+ * ---------------------------------------------
+ * -----  `printDefaultCitySet(cityName)`  -----
+ * ---------------------------------------------
+ * - Confirma que la ciudad es ahora la default.
+ */
+
+export const printDefaultCitySet = (cityName: string): void => {
   console.log(green(`"${cityName}" es ahora la ciudad default.`));
-}
+};
 
-export function printUnitChanged(unitLabel: string): void {
+
+/**
+ * -------------------------------------------
+ * -----  `printUnitChanged(unitLabel)`  -----
+ * -------------------------------------------
+ * - Confirma el cambio de unidad.
+ */
+
+export const printUnitChanged = (unitLabel: string): void => {
   console.log(green(`Unidad cambiada a ${unitLabel}.`));
-}
+};
 
-export function printInvalidOption(): void {
+
+/**
+ * ------------------------------------
+ * -----  `printInvalidOption()`  -----
+ * ------------------------------------
+ * - Avisa opción no válida.
+ */
+
+export const printInvalidOption = (): void => {
   console.log(red("Opción no válida."));
-}
+};
 
-export function printGoodbye(): void {
+
+/**
+ * ------------------------------
+ * -----  `printGoodbye()`  -----
+ * ------------------------------
+ * - Imprime el mensaje de despedida.
+ */
+
+export const printGoodbye = (): void => {
   console.log(cyan("¡Hasta pronto!"));
-}
+};
 
-export function printTtyRequired(): void {
+
+/**
+ * ----------------------------------
+ * -----  `printTtyRequired()`  -----
+ * ----------------------------------
+ * - Avisa que se requiere una terminal interactiva.
+ */
+
+export const printTtyRequired = (): void => {
   console.error(red("Esta aplicación es de consola y requiere una terminal interactiva."));
   console.error(red("Ejecútala desde una terminal:  ./out/weather"));
-}
+};
 
-export function printNetworkError(status: number): void {
+
+/**
+ * -----------------------------------------
+ * -----  `printNetworkError(status)`  -----
+ * -----------------------------------------
+ * - Avisa de error de red con el código HTTP.
+ */
+
+export const printNetworkError = (status: number): void => {
   console.log(red(`✗ Error de red (${status}). Intenta de nuevo.`));
-}
+};
 
-export function printGeocodingConnectionError(err: unknown): void {
+
+/**
+ * --------------------------------------------------
+ * -----  `printGeocodingConnectionError(err)`  -----
+ * --------------------------------------------------
+ * - Avisa de fallo de conexión con el servicio de geocoding.
+ */
+
+export const printGeocodingConnectionError = (err: unknown): void => {
   console.log(red("✗ No se pudo conectar con el servicio de geocoding:"), err);
-}
+};
 
-export function printForecastConnectionError(err: unknown): void {
+
+/**
+ * -------------------------------------------------
+ * -----  `printForecastConnectionError(err)`  -----
+ * -------------------------------------------------
+ * - Avisa de fallo de conexión con el servicio de pronóstico.
+ */
+
+export const printForecastConnectionError = (err: unknown): void => {
   console.log(red("✗ No se pudo conectar con el servicio de pronóstico:"), err);
-}
+};

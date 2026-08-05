@@ -1,10 +1,23 @@
+/*
+    *  -------------------------------------------------------------------------  *
+    *  -----  getWeeklyForecast.ts  --  /src/actions/getWeeklyForecast.ts  -----  *
+    *  -------------------------------------------------------------------------  *
+*/
+
 import type { AppData } from "../types/Settings.ts";
 import { pause } from "../presentation/input.ts";
 import { printForecastFetchError, printNoSavedCities, printWeeklyForecast } from "../presentation/output.ts";
 import { buildWeeklyForecast } from "./getWeather.ts";
 import { promptCitySelection } from "./listCities.ts";
 
-export async function getWeeklyForecastAction(data: AppData): Promise<void> {
+/**
+ * ---------------------------------------------
+ * -----  `getWeeklyForecastAction(data)`  -----
+ * ---------------------------------------------
+ * - Pide selección y muestra el pronóstico de 7 días de una ciudad.
+ */
+
+export const getWeeklyForecastAction = async (data: AppData): Promise<void> => {
   console.log("");
   if (data.cities.length === 0) {
     printNoSavedCities();
@@ -23,4 +36,4 @@ export async function getWeeklyForecastAction(data: AppData): Promise<void> {
     printWeeklyForecast(weekly);
   }
   pause();
-}
+};
