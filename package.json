@@ -1,7 +1,7 @@
 {
   "name": "02-weather",
   "module": "src/index.ts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "private": true,
   "scripts": {
@@ -13,9 +13,7 @@
     "build": "bun test && bun build --compile ./src/index.ts --outfile out/weather"
   },
   "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
+    "@types/bun": "latest",
     "typescript": "^5"
   }
 }
