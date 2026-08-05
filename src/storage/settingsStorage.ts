@@ -12,14 +12,12 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 
-const LEGACY_DATA_FILE = join(homedir(), ".weather-cli", "data.json");
+const getLegacyDataFile = (): string => join(homedir(), ".weather-cli", "data.json");
 
-const DATA_DIR = join(
-  process.env.XDG_CONFIG_HOME ?? join(homedir(), ".config"),
-  "weather-cli",
-);
+const getDataDir = (): string =>
+  join(process.env.XDG_CONFIG_HOME ?? join(homedir(), ".config"), "weather-cli");
 
-const DATA_FILE = join(DATA_DIR, "data.json");
+const getDataFile = (): string => join(getDataDir(), "data.json");
 
 
 /**
@@ -47,15 +45,15 @@ const parseAppData = (raw: string): AppData => {
  */
 
 const migrateLegacyData = (): void => {
-  if (existsSync(DATA_FILE) || !existsSync(LEGACY_DATA_FILE)) {
+  if (existsSync(getDataFile()) || !existsSync(getLegacyDataFile())) {
     return;
   }
   try {
-    if (!existsSync(DATA_DIR)) {
-      mkdirSync(DATA_DIR, { recursive: true });
+    if (!existsSync(getDataDir())) {
+      mkdirSync(getDataDir(), { recursive: true });
     }
-    const raw = readFileSync(LEGACY_DATA_FILE, "utf-8");
-    writeFileSync(DATA_FILE, raw, "utf-8");
+    const raw = readFileSync(getLegacyDataFile(), "utf-8");
+    writeFileSync(getDataFile(), raw, "utf-8");
   } catch {
     //  -----  si falla la migración, loadData usará valores por defecto  -----
   }
@@ -88,10 +86,10 @@ export const getDefaultData = (): AppData => {
 export const loadData = (): AppData => {
   migrateLegacyData();
   try {
-    if (!existsSync(DATA_FILE)) {
+    if (!existsSync(getDataFile())) {
       return getDefaultData();
     }
-    const raw = readFileSync(DATA_FILE, "utf-8");
+    const raw = readFileSync(getDataFile(), "utf-8");
     return parseAppData(raw);
   } catch {
     console.log(yellow("⚠ Aviso: no se pudo leer el archivo de datos. Se usarán valores por defecto."));
@@ -109,10 +107,10 @@ export const loadData = (): AppData => {
 
 export const saveData = (data: AppData): void => {
   try {
-    if (!existsSync(DATA_DIR)) {
-      mkdirSync(DATA_DIR, { recursive: true });
+    if (!existsSync(getDataDir())) {
+      mkdirSync(getDataDir(), { recursive: true });
     }
-    writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+    writeFileSync(getDataFile(), JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
     console.log(red("⚠ Error al guardar los datos:"), err);
   }

@@ -7,7 +7,9 @@
     "start": "bun run src/index.ts",
     "dev": "bun run src/index.ts --watch",
     "typecheck": "bunx tsc --noEmit",
-    "build": "bun build --compile ./src/index.ts --outfile out/weather"
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "build": "bun test && bun build --compile ./src/index.ts --outfile out/weather"
   },
   "devDependencies": {
     "@types/bun": "latest"

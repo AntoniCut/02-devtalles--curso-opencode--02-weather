@@ -1,0 +1,4 @@
+[test]
+#  -----  Tests con spy sobre globalThis.fetch requieren ejecución serial
+#  -----  para evitar race conditions entre archivos de test paralelos
+concurrent = false
